@@ -1,10 +1,10 @@
 import express from 'express'
 require('@dotenvx/dotenvx').config()
 import bodyParser from 'body-parser'
-import { matchFace } from './faceMatch'
+import { matchFace } from './utils/faceMatch'
 import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
-import { AWSRekognitionClient } from './AWSRekognition'
+import { AWSRekognitionClient } from './utils/AWSRekognition'
 
 const app = express()
 
@@ -33,7 +33,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 /**
  * @swagger
- * /test:
+ * /raw:
  *   post:
  *     summary: Match two face images
  *     description: Compares a reference image with a source image and returns a similarity score.
@@ -67,7 +67,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
  *       500:
  *         description: Internal server error
  */
-app.post('/test', async (req, res) => {
+app.post('/raw', async (req, res) => {
   try {
     const response = await matchFace(req.body.referenceImage, req.body.srcImage)
     return res.status(200).json({
@@ -89,7 +89,7 @@ app.post('/test', async (req, res) => {
 
 /**
  * @swagger
- * /mix:
+ * /combined:
  *   post:
  *     summary: Compare faces using multiple methods
  *     description: >
@@ -134,13 +134,13 @@ app.post('/test', async (req, res) => {
  *         description: Internal server error
  */
 
-app.post('/mix', async (req, res) => {
+app.post('/combined', async (req, res) => {
   try {
     const srcImageUrl = req.body.srcImageUrl
     const targetImageUrl = req.body.targetImageUrl
     const sourceReference = srcImageUrl.split('.com/')[1]
     const targetReference = targetImageUrl.split('.com/')[1]
-    console.log("Source",sourceReference)
+    console.log('Source', sourceReference)
     console.log('Target', targetReference)
 
     const rekognitionService = new AWSRekognitionClient()
@@ -154,8 +154,8 @@ app.post('/mix', async (req, res) => {
     const mixResponse = await rekognitionService.compareFacesMix(sourceReference, targetBytes)
     return res.status(200).json({
       s3ReferenceResponse,
-        bytesResponse,
-        mixResponse,
+      bytesResponse,
+      mixResponse,
     })
   } catch (err) {
     console.error((err as Error).message)
@@ -163,7 +163,7 @@ app.post('/mix', async (req, res) => {
   }
 })
 
-app.listen(3000, () => {
+export const HttpServer = app.listen(process.env.PORT || 3000, () => {
   console.log('Server is Running on http://localhost:3000')
   console.log('Swagger Docs available at http://localhost:3000/api-docs')
 })

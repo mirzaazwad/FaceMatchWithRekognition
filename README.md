@@ -41,6 +41,7 @@ AWS_ACCESS_KEY_ID=<your-access-key>
 AWS_SECRET_ACCESS_KEY=<your-secret-key>
 AWS_BUCKET_NAME=<your-s3-bucket-name>
 PORT=3000
+SAMPLE_IMAGE_URLS=[s3 bucket url1],[s3 bucket url2]
 ```
 
 Make sure the AWS credentials have access to **Rekognition** and the S3 bucket where images are stored.
