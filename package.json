@@ -1,0 +1,30 @@
+{
+  "name": "face-match-with-rekognition",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "Mirza Mohammad Azwad | mirzaazwad8@gmail.com",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node-dev --respawn -- src/app.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-rekognition": "^3.971.0",
+    "@dotenvx/dotenvx": "^1.51.4",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
+    "axios": "^1.13.2",
+    "express": "^5.2.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "ts-node-dev": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.0.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
