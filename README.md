@@ -7,14 +7,18 @@ A Node.js API using **AWS Rekognition** to compare and match faces in images. It
 ## Table of Contents
 
 1. [Installation](#installation)
-2. [Environment Setup](#environment-setup)
-3. [API Endpoints](#api-endpoints)
-   - [POST /test](#post-test)
-   - [POST /mix](#post-mix)
+2. [Scripts](#scripts)
+3. [Environment Setup](#environment-setup)
+4. [Testing](#testing)
+5. [Building and Deployment](#building-and-deployment)
+6. [API Endpoints](#api-endpoints)
+   - [POST /raw](#post-raw)
+   - [POST /combined](#post-combined)
 
-4. [AWS Rekognition Client](#aws-rekognition-client)
-5. [Face Matching Utility](#face-matching-utility)
-6. [Swagger Documentation](#swagger-documentation)
+7. [AWS Rekognition Client](#aws-rekognition-client)
+8. [Face Matching Utility](#face-matching-utility)
+9. [Swagger Documentation](#swagger-documentation)
+10. [Architecture](#architecture)
 
 ---
 
@@ -28,6 +32,17 @@ npm run dev
 ```
 
 This will start the server on **[http://localhost:3000](http://localhost:3000)**.
+
+---
+
+## Scripts
+
+The following npm scripts are available in `package.json`:
+
+- `npm run dev`: Starts the development server with hot-reloading using `ts-node-dev`.
+- `npm test`: Runs the test suite using `jest`.
+- `npm run build`: Compiles the TypeScript code to JavaScript using `tsc`.
+- `npm start`: Starts the application in production mode using `pm2-runtime`.
 
 ---
 
@@ -48,9 +63,48 @@ Make sure the AWS credentials have access to **Rekognition** and the S3 bucket w
 
 ---
 
+## Testing
+
+To run the tests, execute the following command:
+
+```bash
+npm test
+```
+
+This project uses **Jest** for testing. The tests are located in the `tests/` directory:
+
+- `api.test.ts`: Integration tests for API endpoints.
+- `unit.test.ts`: Unit tests for helper functions and logic.
+
+The test command runs with `--detectOpenHandles` to identify any asynchronous operations that might prevent Jest from exiting.
+
+## Building and Deployment
+
+### Build
+
+To build the application for production, run:
+
+```bash
+npm run build
+```
+
+This will compile the TypeScript source code into the `dist` (or configured output) directory based on `tsconfig.build.json`.
+
+### Start
+
+To start the application in a production environment:
+
+```bash
+npm start
+```
+
+This command uses **PM2** (`pm2-runtime`) to manage the process, using the configuration defined in `ecosystem.config.js`. Ensure you have built the project before starting it in production.
+
+---
+
 ## API Endpoints
 
-### POST `/test`
+### POST `/raw`
 
 Compare two images in S3 and get a similarity score.
 
@@ -89,7 +143,7 @@ Uses AWS Rekognition to compare two faces from S3 objects and returns whether a 
 
 ---
 
-### POST `/mix`
+### POST `/combined`
 
 Compare two faces using multiple methods:
 
@@ -176,22 +230,24 @@ The project includes **Swagger UI** for interactive API documentation:
 
 It documents:
 
-- `POST /test` – Single face comparison
-- `POST /mix` – Multi-method face comparison
+- `POST /raw` – Single face comparison
+- `POST /combined` – Multi-method face comparison
 
 ---
 
+## Architecture
+
 ```mermaid
     flowchart TD
-        A[Client] -->|POST /test| B[API Server: /test Endpoint]
+        A[Client] -->|POST /raw| B[API Server: /raw Endpoint]
         B --> C[matchFace Function]
         C --> D[AWS Rekognition: CompareFacesCommand]
         D --> E[Response: FaceMatches]
         E --> F[API Server formats response]
         F --> A[Client receives similarity & match info]
 
-        %% Mix Endpoint
-        A2[Client] -->|POST /mix| B2[API Server: /mix Endpoint]
+        %% Combined Endpoint
+        A2[Client] -->|POST /combined| B2[API Server: /combined Endpoint]
         B2 --> C2[Download Images from URLs]
         C2 --> D2[Convert Images to Base64 Bytes]
         D2 --> E2[Initialize AWSRekognitionClient]
