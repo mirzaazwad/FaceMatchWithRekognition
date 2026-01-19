@@ -1,11 +1,18 @@
 import supertest from 'supertest'
-import { HttpServer } from '../src/app'
+import { IncomingMessage, Server, ServerResponse } from 'node:http'
+import app from '../src/app'
 
 describe('Face Match API Tests', () => {
-  beforeAll(async () => {})
+  let server: Server<typeof IncomingMessage, typeof ServerResponse>
+
+  beforeAll(async () => {
+    server = app.listen(process.env.PORT, () => {
+      console.log('Test Server is Running')
+    })
+  })
 
   afterAll(async () => {
-    HttpServer.close()
+    server.close()
   })
 
   it('POST API Test for Face Match RAW', async () => {
@@ -13,7 +20,7 @@ describe('Face Match API Tests', () => {
     if (urls.length < 2) {
       throw new Error(`Please check environment variables for sample images`)
     }
-    const faceMatchResponse = await supertest(HttpServer)
+    const faceMatchResponse = await supertest(server)
       .post('/raw')
       .send({
         srcImage: urls[0].split('.com/')[1],
@@ -31,7 +38,7 @@ describe('Face Match API Tests', () => {
     if (urls.length < 2) {
       throw new Error(`Please check environment variables for sample images`)
     }
-    const faceMatchResponse = await supertest(HttpServer).post('/combined').send({
+    const faceMatchResponse = await supertest(server).post('/combined').send({
       srcImageUrl: urls[0],
       targetImageUrl: urls[1],
     })

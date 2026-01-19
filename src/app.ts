@@ -1,5 +1,4 @@
 import express from 'express'
-require('@dotenvx/dotenvx').config()
 import bodyParser from 'body-parser'
 import { matchFace } from './utils/faceMatch'
 import swaggerJsdoc from 'swagger-jsdoc'
@@ -163,7 +162,4 @@ app.post('/combined', async (req, res) => {
   }
 })
 
-export const HttpServer = app.listen(process.env.PORT || 3000, () => {
-  console.log('Server is Running on http://localhost:3000')
-  console.log('Swagger Docs available at http://localhost:3000/api-docs')
-})
+export default app
