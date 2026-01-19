@@ -4,7 +4,7 @@ module.exports = {
   apps: [
     {
       name: 'face-match-api',
-      script: 'dist/app.js',
+      script: 'dist/index.js',
       instances: 1,
       autorestart: true,
       watch: false,
