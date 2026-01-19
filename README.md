@@ -181,27 +181,26 @@ It documents:
 ---
 
 ```mermaid
-flowchart TD
-    A[Client] -->|POST /test| B[API Server: /test Endpoint]
-    B --> C[matchFace Function]
-    C --> D[AWS Rekognition: CompareFacesCommand]
-    D --> E[Response: FaceMatches]
-    E --> F[API Server formats response]
-    F --> A[Client receives similarity & match info]
+    flowchart TD
+        A[Client] -->|POST /test| B[API Server: /test Endpoint]
+        B --> C[matchFace Function]
+        C --> D[AWS Rekognition: CompareFacesCommand]
+        D --> E[Response: FaceMatches]
+        E --> F[API Server formats response]
+        F --> A[Client receives similarity & match info]
 
-    %% Mix Endpoint
-    A2[Client] -->|POST /mix| B2[API Server: /mix Endpoint]
-    B2 --> C2[Download Images from URLs]
-    C2 --> D2[Convert Images to Base64 Bytes]
-    D2 --> E2[Initialize AWSRekognitionClient]
-    E2 --> F2[Compare Faces by S3 Reference]
-    E2 --> G2[Compare Faces by Bytes]
-    E2 --> H2[Compare Faces Mix (S3 + Bytes)]
-    F2 --> I2[Format Response]
-    G2 --> I2
-    H2 --> I2
-    I2 --> B2[Send aggregated response to Client]
-
+        %% Mix Endpoint
+        A2[Client] -->|POST /mix| B2[API Server: /mix Endpoint]
+        B2 --> C2[Download Images from URLs]
+        C2 --> D2[Convert Images to Base64 Bytes]
+        D2 --> E2[Initialize AWSRekognitionClient]
+        E2 --> F2["Compare Faces by S3 Reference"]
+        E2 --> G2["Compare Faces by Bytes"]
+        E2 --> H2["Compare Faces Mix (S3 + Bytes)"]
+        F2 --> I2[Format Response]
+        G2 --> I2
+        H2 --> I2
+        I2 --> B2[Send aggregated response to Client]
 ```
 
 ## Notes
