@@ -142,7 +142,7 @@ app.post('/combined', async (req, res) => {
     console.log('Source', sourceReference)
     console.log('Target', targetReference)
 
-    const rekognitionService = new AWSRekognitionClient()
+    const rekognitionService = new AWSRekognitionClient(98)
     const sourceBytes = (await rekognitionService.convertToBase64(srcImageUrl)).base64Buffer
     const targetBytes = (await rekognitionService.convertToBase64(targetImageUrl)).base64Buffer
     const s3ReferenceResponse = await rekognitionService.compareFacesByS3Reference(
@@ -152,6 +152,7 @@ app.post('/combined', async (req, res) => {
     const bytesResponse = await rekognitionService.compareFacesByBytes(sourceBytes, targetBytes)
     const mixResponse = await rekognitionService.compareFacesMix(sourceReference, targetBytes)
     return res.status(200).json({
+      shouldGive: s3ReferenceResponse.score > 99,
       s3ReferenceResponse,
       bytesResponse,
       mixResponse,

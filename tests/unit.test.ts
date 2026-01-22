@@ -16,7 +16,7 @@ describe('AWSRekognitionClient Class Tests', () => {
   let client: AWSRekognitionClient
 
   beforeAll(() => {
-    client = new AWSRekognitionClient()
+    client = new AWSRekognitionClient(98)
   })
 
   it('processResult should return correct MatchResponse when FaceMatches exist', () => {

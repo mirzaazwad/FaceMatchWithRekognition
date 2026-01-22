@@ -9,7 +9,6 @@ import {
 } from '@aws-sdk/client-rekognition'
 import axios from 'axios'
 
-
 /**
  * Represents the result of a face comparison.
  */
@@ -22,6 +21,7 @@ export type MatchResponse = {
 
   /** The face data of the most significant match, if available. */
   mostMatchedFace?: ComparedFace
+  response: any
 }
 
 /**
@@ -42,7 +42,7 @@ export class AWSRekognitionClient {
    */
   private readonly rekognitionClient: RekognitionClient
 
-  constructor() {
+  constructor(private threshold: number) {
     this.rekognitionConfiguration = {
       region: process.env.AWS_REGION,
       credentials: {
@@ -59,17 +59,20 @@ export class AWSRekognitionClient {
    * @returns {MatchResponse} - Formatted match result with similarity score and most matched face.
    */
   processResult(response: CompareFacesCommandOutput): MatchResponse {
+    console.log(response)
     if (response['FaceMatches'] && response['FaceMatches'].length) {
       const similarityScore = response['FaceMatches'][0].Similarity ?? 0
       return {
         hasMatch: similarityScore > 0,
         score: similarityScore,
         mostMatchedFace: response['FaceMatches'][0]['Face'],
+        response,
       }
     } else {
       return {
         hasMatch: false,
         score: 0,
+        response,
       }
     }
   }
@@ -95,7 +98,7 @@ export class AWSRekognitionClient {
           Name: targetReference,
         },
       },
-      SimilarityThreshold: 98,
+      SimilarityThreshold: this.threshold,
     }
 
     const rekognitionCommand = new CompareFacesCommand(input)
@@ -121,7 +124,7 @@ export class AWSRekognitionClient {
       TargetImage: {
         Bytes: referenceBytes,
       },
-      SimilarityThreshold: 98,
+      SimilarityThreshold: this.threshold,
     }
 
     const rekognitionCommand = new CompareFacesCommand(input)
@@ -147,7 +150,7 @@ export class AWSRekognitionClient {
       TargetImage: {
         Bytes: referenceBytes,
       },
-      SimilarityThreshold: 98,
+      SimilarityThreshold: this.threshold,
     }
 
     const rekognitionCommand = new CompareFacesCommand(input)
